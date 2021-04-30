@@ -1,0 +1,24 @@
+service: modelserve
+runtime: python
+env: flex
+entrypoint: gunicorn -b :$PORT main:app
+
+runtime_config:
+  python_version: 3.7
+
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 15
+  cool_down_period_sec: 180
+  cpu_utilization:
+    target_utilization: 0.6
+  target_concurrent_requests: 100
+
+endpoints_api_service:
+  name: modelserve-dot-verifi-5e841.appspot.com
+  config_id: 2021-04-05r0
+
+env_variables:
+    # The app will look for the model file at: gs://MODEL_BUCKET/MODEL_FILENAME
+    MODEL_BUCKET: verifi-5e841.appspot.com
+    MODEL_FILENAME: TriFN.pkl

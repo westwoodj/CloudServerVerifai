@@ -1,0 +1,102 @@
+swagger: "2.0"
+info:
+  title: "modelserve"
+  description: "Get prediction from sklearn model."
+  version: "1.0.0"
+host: "modelserve-dot-verifi-5e841.appspot.com"
+schemes:
+  - "https"
+security:
+  - api_key: []
+securityDefinitions:
+  api_key:
+    type: "apiKey"
+    name: "key"
+    in: "query"
+x-google-management:
+  metrics:
+    - name: "modelserve-predict"
+      displayName: "modelserve predict"
+      valueType: INT64
+      metricKind: DELTA
+  quota:
+    limits:
+      - name: "modelserve-predict-limit"
+        metric: "modelserve-predict"
+        unit: "1/min/{project}"
+        values:
+          STANDARD: 1000
+paths:
+  "/predict":
+    post:
+      description: "Get prediction given X."
+      operationId: "predict"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        -
+          name: "body"
+          in: "body"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - X
+              properties:
+                X:
+                  type: "string"
+                topic:
+                  type: "string"
+      responses:
+        200:
+          description: "Success."
+          schema:
+            $ref: "#/definitions/y"
+              #- $ref: "#/definitions/tweep"
+        400:
+          description: "Missing X."
+          schema:
+            type: "object"
+              required:
+                - message
+                properties:
+                  message:
+                    type: "string"
+                  code:
+                    type: "number"
+                    format: "integer"
+      x-google-quota:
+        metricCosts:
+          modelserve-predict: 1
+definitions:
+  X:
+    type: "object"
+    required:
+    - "X"
+    properties:
+      X:
+        type: "array"
+        items:
+          type: "array"
+          items:
+            type: "number"
+            format: "float"
+  y:
+    type: "object"
+    required:
+    - "y"
+    properties:
+      y:
+        type: "number"
+        format: "float"
+      confidence:
+        type: "number"
+        format: "float"
+      code:
+        type: "number"
+        format: "float"
+
+
+
